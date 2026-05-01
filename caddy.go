@@ -597,6 +597,24 @@ func ProvisionContext(newCfg *Config) (Context, error) {
 	return provisionContext(newCfg, false)
 }
 
+// ProvisionContextWithCancel creates and provisions a context from the
+// configuration, returning the cancel function that cleans up loaded modules.
+// It does not start apps or any listeners.
+//
+// This is intended for embedders which need the provisioned module graph but
+// own the request serving loop themselves.
+func ProvisionContextWithCancel(newCfg *Config) (Context, context.CancelCauseFunc, error) {
+	provisionedCtx, err := provisionContext(newCfg, false)
+	cancel := func(error) {}
+	if newCfg != nil && newCfg.cancelFunc != nil {
+		cancel = newCfg.cancelFunc
+	}
+	if err != nil {
+		return provisionedCtx, cancel, err
+	}
+	return provisionedCtx, cancel, nil
+}
+
 // finishSettingUp should be run after all apps have successfully started.
 func finishSettingUp(ctx Context, cfg *Config) error {
 	// establish this server's identity (only after apps are loaded

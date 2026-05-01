@@ -145,6 +145,9 @@ type HTTPTransport struct {
 	// The pre-configured underlying HTTP transport.
 	Transport *http.Transport `json:"-"`
 
+	// The pre-configured WASM fetch transport.
+	fetchTransport http.RoundTripper
+
 	// The module that provides the network (forward) proxy
 	// URL that the HTTP transport will use to proxy
 	// requests to the upstream. See [http.Transport.Proxy](https://pkg.go.dev/net/http#Transport.Proxy)
@@ -190,6 +193,10 @@ func (h *HTTPTransport) Provision(ctx caddy.Context) error {
 		if !slices.Contains(allowedVersions, v) {
 			return fmt.Errorf("unsupported HTTP version: %s, supported version: %s", v, allowedVersionsString)
 		}
+	}
+
+	if h.provisionFetchTransport(ctx) {
+		return nil
 	}
 
 	rt, err := h.NewTransport(ctx)
@@ -554,6 +561,10 @@ func (h *HTTPTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// use HTTP/3 if enabled (TODO: This is EXPERIMENTAL)
 	if h.h3Transport != nil {
 		return h.h3Transport.RoundTrip(req)
+	}
+
+	if h.fetchTransport != nil {
+		return h.fetchTransport.RoundTrip(req)
 	}
 
 	return h.Transport.RoundTrip(req)

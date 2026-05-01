@@ -29,3 +29,7 @@ caddy-dist
 # IDE files
 .idea/
 .vscode/
+
+.wrangler/
+wasm_exec.js
+*.wasm

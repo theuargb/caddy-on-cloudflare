@@ -27,6 +27,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
+	github.com/syumai/workers v0.32.0
 	github.com/tailscale/tscert v0.0.0-20251216020129-aea342f6d747
 	github.com/yuin/goldmark v1.8.2
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
@@ -176,3 +177,5 @@ require (
 	google.golang.org/protobuf v1.36.11 // indirect
 	howett.net/plist v1.0.0 // indirect
 )
+
+replace github.com/syumai/workers => github.com/theuargb/workers-go v0.0.0-20260502134151-a7359a2f651a
